@@ -1,0 +1,29 @@
+<html>
+
+</html>
+
+
+<html>
+<head>
+<title>Pi Scanner</title>
+  <script src='jquery-2.0.0.min.js'></script>
+</head>
+  
+ <body>
+
+<input type='button' value='Shooting mode' onclick="doAction('modeshoot');"/>
+<input type='button' value='View mode' onclick="doAction('modeview');"/>
+<input type='button' value='shoot' onclick="doAction('shoot');"/>
+<input type='button' value='focus' onclick="doAction('focus');"/>
+
+
+<script>
+
+function doAction(arg) {
+	$.post("?", { action:arg} );
+  console.log(arg);
+}
+
+</script>
+ </body>
+</html>
