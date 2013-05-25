@@ -1,3 +1,4 @@
+// Requires node.js and connect. 
 
 var util = require('util'),
     exec = require('child_process').exec,
@@ -8,41 +9,56 @@ var c2 = 0;
 var num = 0;
 getCams();
 
-
 var connect = require('../node/node_modules/connect');
 var app = connect();
+//var io = require('../node/node_modules/socket.io').listen(app);
 
 app
   .use(connect.static(__dirname +'/ui'))
   .use(connect.bodyParser())
   .use(function(req, res) {
-    res.end();
-    parseAction(req.body.action);
-    
+   parseAction(req.body.action, res);
+   // res.end(parseAction(req.body.action));
 })
 .listen(8080);
 
 
-function parseAction(arg){
-  console.log(arg); 
-	if(arg == "modeshoot"){
-		shootMode(c1, 1);	
-//		shootMode(c2, todo[1]);	
-	}
+//io.sockets.on('connection', function (socket) {
+//  socket.emit('news', { hello: 'world' });
+//  socket.on('my other event', function (data) {
+//    console.log(data);
+//  });
+//});
 
-	if(arg == "modeview"){
-		shootMode(c1, 0);	
-//		shootMode(c2, todo[1]);	
-	}
-	
-	if(arg == "shoot"){
-		shoot(c1);
-//		shoot(c2);
-		num++;
-	}
+function parseAction(arg, res){
+  switch (arg) {
+    case "modeshoot":
+      shootMode(c1, 1);	
+      res.end("modeshoot");
+      //shootMode(c2, todo[1]);	
+    break;
 
-  if(arg == "focus"){
-    focus(c1);
+    case "modeview":
+      shootMode(c1, 0);	
+      res.end("View Mode");
+      //shootMode(c2, todo[1]);	
+    break;
+
+    case "shoot":
+      shoot(c1, res);
+      //shoot(c2);
+      num++;
+    break;
+
+    case "focus":
+      focus(c1);
+      res.end("focus");
+    break;
+
+    default:
+      res.end("end");
+      console.log("other response." + arg); 
+    break;
   }
 }
 
@@ -101,35 +117,33 @@ function getCams(){
 function shootMode(cam, mode){
 	console.log("Shoot mode...");
 	// turn on camera mode
-	arg = "ptpcam --dev=" + cam + " --chdk='mode " + mode + "'";	
+	var arg = "ptpcam --dev=" + cam + " --chdk='mode " + mode + "'";	
 	
   go = exec(arg,  function (error, stdout, stderr) {
 			console.log(stdout);
 	});
-	console.log(c1);
-	console.log(c2);
+//	console.log(c1);
+//	console.log(c2);
 }
 
 
 function focus(cam){
 	console.log("Focusing...");
 	// turn on camera mode
-	arg = "ptpcam --dev=" + cam + " --chdk=\"luar loadfile('A/CHDK/SCRIPTS/jonfocus.lua')()\"";	
+	var arg = "ptpcam --dev=" + cam + " --chdk=\"luar loadfile('A/CHDK/SCRIPTS/focus.lua')()\"";	
 	
   go = exec(arg,  function (error, stdout, stderr) {
 			console.log(stdout);
 	});
 }
 
-function shoot(cam){
+function shoot(cam, res){
 	console.log("shooting...");
-	//arg = "ptpcam --dev=" + cam + " --chdk=luar loadfile('A/CHDK/SCRIPTS/scan.lua')()";	
-	//arg = "ptpcam --dev=" + cam + " --chdk=lua shoot(0)";	
-	//arg = "./shootSave.sh " + cam + " " + num;	
-	arg = "./start.sh " + cam + " " + num;	
-  bang = exec(arg,  function (error, stdout, stderr) {
-		console.log(stdout);
-//	getPath(cam, 0);					
-
+	var arg = "./start.sh " + cam + " " + num;	
+  var bang = exec(arg,  function (error, stdout, stderr) {
+    console.log(stdout);
+    var pth = stdout;
+    res.end(pth);
 	});
 }
+

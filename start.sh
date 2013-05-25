@@ -16,15 +16,15 @@ function getPath(){
 pth=$(getPath $1 0)
 nm=`echo $pth | grep -o 'IMG[^J]*JPG'`
 
-echo $pth
+#echo $pth
 #echo $nm
 
-imdir="/home/pi/scan/images"
-ptpcam --dev=$1 --chdk="download $pth $imdir/$2.$nm"
+imdir="/home/pi/scan/piscan/ui/images"
+ptcmd=`ptpcam --dev=$1 --chdk="download $pth $imdir/$2.$nm"`
 #ptpcam --chdk="download $pth $imdir/$2.$nm"
-echo "downloaden..."
+#echo "downloaden..."
 junk=`ptpcam --chdk="getm"`
 #delete the file from the cam after it is downloaded
-ptpcam -D
+dk=`ptpcam -D`
 
 echo "$imdir/$nm"
