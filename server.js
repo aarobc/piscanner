@@ -141,9 +141,14 @@ function shoot(cam, res){
 	console.log("shooting...");
 	var arg = "./start.sh " + cam + " " + num;	
   var bang = exec(arg,  function (error, stdout, stderr) {
-    console.log(stdout);
-    var pth = stdout;
-    res.end(pth);
+    var regex = /IMG[^$]*$/;
+    
+    var pth = regex.exec(stdout)[0];
+    console.log(pth);
+    var pnum = num - 1;
+    var pathsI = "images/" + pnum + "." + pth;
+    res.end(pathsI);
+
 	});
 }
 

@@ -7,16 +7,25 @@
 <head>
 <title>Pi Scanner</title>
   <script src='jquery-2.0.0.min.js'></script>
+  <script src='bootstrap/js/bootstrap.min.js'></script>
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
   
  <body>
-
-<input type='button' value='Shooting mode' onclick="doAction('modeshoot');"/>
-<input type='button' value='View mode' onclick="doAction('modeview');"/>
-<input type='button' value='shoot' onclick="doAction('shoot');"/>
-<input type='button' value='focus' onclick="doAction('focus');"/>
-
-
+  <div class='container-fluid'>
+    <div class='row-fluid'>
+      <div class='span10'>
+        <input type='button' value='Shooting mode' onclick="doAction('modeshoot');"/>
+        <input type='button' value='View mode' onclick="doAction('modeview');"/>
+        <input type='button' value='shoot' onclick="shoot();"/>
+        <input type='button' value='focus' onclick="doAction('focus');"/>
+      </div>
+    </div>
+    <div class='row-fluid'>
+      <div class='span6 im1'></div>
+      <div class='span6 im2'></div>
+    </div>
+</div>
 <script>
 
 function doAction(arg) {
@@ -25,6 +34,14 @@ function doAction(arg) {
   return false;
 }
 
+function shoot() {
+	$.post("?", { action:'shoot'}, function(data){
+    console.log(data); 
+   $('.im1').html("<img src='" + data + "' />");
+  });
+   console.log("shoot");
+  return false;
+}
 </script>
 
  </body>
