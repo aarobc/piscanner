@@ -4,6 +4,7 @@ var util = require('util'),
     exec = require('child_process').exec,
     child;
 
+var zlevel = 0;
 var c1 = 0;
 var c2 = 0;
 var num = 0;
@@ -53,6 +54,22 @@ function parseAction(arg, res){
     case "focus":
       focus(c1);
       res.end("focus");
+    break;
+
+    case "zoomin":
+      if(zlevel < 7){ 
+        zlevel++;
+        zoomin(c1);
+        res.end("zoomin");
+      }
+    break;
+
+    case "zoomout":
+      if(zlevel > -1){ 
+        zlevel--;
+        zoomout(c1);
+        res.end("zoomout");
+      }
     break;
 
     default:
@@ -111,8 +128,26 @@ function getCams(){
 	});
 }
 
+function zoomin(cam){
+
+	var arg = "ptpcam --dev=" + cam + " --chdk='lua set_zoom(" + zlevel + ")'";	
+	
+  go = exec(arg,  function (error, stdout, stderr) {
+			console.log(stdout);
+	});
+
+}
 
 
+function zoomout(cam){
+
+	var arg = "ptpcam --dev=" + cam + " --chdk='lua set_zoom(" + zlevel + ")'";	
+	
+  go = exec(arg,  function (error, stdout, stderr) {
+			console.log(stdout);
+	});
+
+}
 
 function shootMode(cam, mode){
 	console.log("Shoot mode...");
