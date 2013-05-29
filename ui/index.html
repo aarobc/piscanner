@@ -15,6 +15,7 @@
   <div class='container-fluid'>
     <div class='row-fluid'>
       <div class='span10'>
+        <input type='button' value='Get Cams' onclick="getCams();"/>
         <input type='button' value='Shooting mode' onclick="doAction('modeshoot');"/>
         <input type='button' value='View mode' onclick="doAction('modeview');"/>
         <input type='button' value='shoot' onclick="shoot();"/>
@@ -30,6 +31,8 @@
     </div>
 </div>
 <script>
+var camA;
+var camB;
 
 function doAction(arg) {
 	$.post("?", { action:arg} );
@@ -37,6 +40,19 @@ function doAction(arg) {
   return false;
 }
 
+// this is probably not going to work, need to use json to parse it out, just laying it out for now. 
+function getCams() {
+	$.post("?", { action:"getcams"}, function(resp){
+		camA = resp.camA;
+		camB = resp.camB;
+		console.log(camA);
+		console.log(camB);
+	});
+	
+	return false;
+}
+// should configure this so each cam is triggered separately 
+// should add an option to aquire cameras on event, not individual process. 
 function shoot() {
 	$.post("?", { action:'shoot'}, function(data){
     console.log(data); 
