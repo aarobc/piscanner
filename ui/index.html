@@ -43,8 +43,10 @@ function doAction(arg) {
 // this is probably not going to work, need to use json to parse it out, just laying it out for now. 
 function getCams() {
 	$.post("?", { action:"getcams"}, function(resp){
-		camA = resp.camA;
-		camB = resp.camB;
+    // need to use some sort of json method instead of standard post or something. 
+		camA = resp[0];
+		camB = resp[1];
+    console.log(resp);
 		console.log(camA);
 		console.log(camB);
 	});

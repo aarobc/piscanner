@@ -8,7 +8,7 @@ var zlevel = 0;
 var c1 = 0;
 var c2 = 0;
 var num = 0;
-getCams();
+//getCams();
 
 var connect = require('../node/node_modules/connect');
 var app = connect();
@@ -23,13 +23,6 @@ app
 })
 .listen(8080);
 
-
-//io.sockets.on('connection', function (socket) {
-//  socket.emit('news', { hello: 'world' });
-//  socket.on('my other event', function (data) {
-//    console.log(data);
-//  });
-//});
 
 function parseAction(arg, res){
   switch (arg) {
@@ -72,6 +65,10 @@ function parseAction(arg, res){
       }
     break;
 
+    case "getcams":
+        getCams(res);
+    break;
+
     default:
       res.end("end");
       console.log("other response." + arg); 
@@ -83,47 +80,32 @@ function parseAction(arg, res){
 
 //**************** cam code
 
-function getCams(){
+function getCams(req){
 	console.log("Getting cameras...");
-	//run = "ptpcam -l | grep Canon | cut -d/  -f2 | awk '{print $1}'";
-	run = "lsusb | grep Canon | awk '{print $4}' | cut -d: -f1";
+  run = "ptpcam -l | grep Canon | cut -d/  -f2 | awk '{print $1}'";
+//	run = "lsusb | grep Canon | awk '{print $4}' | cut -d: -f1";
 	//run = "";
 
-  child = exec(run,  function (error, stdout, stderr) {
+  var child = exec(run,  function (error, stdout, stderr) {
 
-
-	//	re = /...\/(...)\s/g;
-
-
+    //console.log(stdout);
 		re = /[0-9]{3}/g;
-		//res = re.find(stdout);
-		res = re.exec(stdout);
-		console.log(stdout);
+	  res = stdout.match(re); 
 
-		console.log("parsed...");
-		console.log(res[0]);
+		console.log("regex output:");		
+		console.log(res[0]);		
+// test for to make sure the cams are connected
+		if(!res[1] || !res[0]){
+			console.log("cameras not connected");
+			return 0;
+		}
 
-		c1 = res[0];
-			
-	//	res = stdout.match(re[0]); 
-		
-		
-	//	console.log("regex output:");		
-	//	console.log(res[0]);		
-		// test for to make sure the cams are connected
-//		if(!res[1] || !res[0]){
-//			console.log("cameras not connected");
-//			return 0;
-//		}
-
-//	ex = /\/(...)/;
-//		c1 = ex.exec(res[0])[1];
-//		c2 = ex.exec(res[1])[1];
-//	c1 = res[1];
-			c2 = 'werp';
+    c1 = res[0];
+    c2 = res[1];
 
 		console.log("Cameras found! : " + c1 + ", " + c2);
 
+    req.end('["' + c1 + '", "' + c2 + '"]');
 
 	});
 }
@@ -135,7 +117,6 @@ function zoomin(cam){
   go = exec(arg,  function (error, stdout, stderr) {
 			console.log(stdout);
 	});
-
 }
 
 
@@ -146,7 +127,6 @@ function zoomout(cam){
   go = exec(arg,  function (error, stdout, stderr) {
 			console.log(stdout);
 	});
-
 }
 
 function shootMode(cam, mode){
