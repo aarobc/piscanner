@@ -15,14 +15,14 @@
   <div class='container-fluid'>
     <div class='row-fluid'>
       <div class='span10'>
-        <input type='button' value='Get Cams' onclick="getCams();"/>
-        <input type='button' value='Shooting mode' onclick="doAction('modeshoot');"/>
-        <input type='button' value='View mode' onclick="doAction('modeview');"/>
-        <input type='button' value='shoot' onclick="shoot();"/>
-        <input type='button' value='focus' onclick="doAction('focus');"/>
+        <input id='getCams' type='button' value='Get Cams' onclick="getCams();"/>
+        <input class='both' id='modeshoot' type='button' value='Shooting mode'/>
+        <input class='both' id='modeview' type='button' value='View mode' />
+        <input id='shoot' type='button' value='shoot' onclick="shoot();" />
+        <input class='both' id='focus' type='button' value='focus' />
         
-        <input type='button' value='zoomin' onclick="doAction('zoomin');"/>
-        <input type='button' value='zoomout' onclick="doAction('zoomout');"/>
+        <input class='both' id='zoomin' type='button' value='zoomin' />
+        <input class='both' id='zoomout' type='button' value='zoomout' />
       </div>
     </div>
     <div class='row-fluid'>
@@ -34,9 +34,9 @@
 var camA;
 var camB;
 
-function doAction(arg) {
-	$.post("?", { action:arg} );
-  console.log(arg);
+function doAction(cam, arg) {
+	$.post("?", { action:arg, cam:cam} );
+ // console.log(arg);
   return false;
 }
 
@@ -44,9 +44,10 @@ function doAction(arg) {
 function getCams() {
 	$.post("?", { action:"getcams"}, function(resp){
     // need to use some sort of json method instead of standard post or something. 
-		camA = resp[0];
-		camB = resp[1];
-    console.log(resp);
+    var son = $.parseJSON(resp);
+    console.log(son);
+    camA = son[0];
+    camB = son[1];
 		console.log(camA);
 		console.log(camB);
 	});
@@ -55,10 +56,23 @@ function getCams() {
 }
 // should configure this so each cam is triggered separately 
 // should add an option to aquire cameras on event, not individual process. 
-function shoot() {
-	$.post("?", { action:'shoot'}, function(data){
+$('.both').click(function(){
+  var wat = $(this).attr('id');
+  console.log(wat);
+  doAction(camA, wat);
+  doAction(camB, wat);
+});
+
+function shoot(cam) {
+	$.post("?", { action:'shoot', cam: cam}, function(data){
     console.log(data); 
-   $('.im1').html("<img src='" + data + "' />");
+    if(cam == camA){
+      $('.im1').html("<img src='" + data + "' />");
+    }
+    else{
+      $('.im2').html("<img src='" + data + "' />");
+    }
+   //$('.im1').html("<img src='" + data + "' />");
   });
    console.log("shoot");
   return false;

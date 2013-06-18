@@ -20,7 +20,7 @@ end
 fastshoot()
 
 --write_usb_msg("After func...")
-sleep(1000)
+sleep(1500)
 
 --write_usb_msg("After delay...")
 local hur=os.listdir("A/DCIM")

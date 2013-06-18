@@ -18,41 +18,40 @@ app
   .use(connect.static(__dirname +'/ui'))
   .use(connect.bodyParser())
   .use(function(req, res) {
-   parseAction(req.body.action, res);
+     parseAction(req.body.action, req.body.cam, res);
    // res.end(parseAction(req.body.action));
 })
 .listen(8080);
 
 
-function parseAction(arg, res){
+function parseAction(arg, cam, res){
   switch (arg) {
     case "modeshoot":
-      shootMode(c1, 1);	
+      shootMode(cam, 1);	
       res.end("modeshoot");
       //shootMode(c2, todo[1]);	
     break;
 
     case "modeview":
-      shootMode(c1, 0);	
+      shootMode(cam, 0);	
       res.end("View Mode");
       //shootMode(c2, todo[1]);	
     break;
 
     case "shoot":
-      shoot(c1, res);
-      //shoot(c2);
+      shoot(cam, res);
       num++;
     break;
 
     case "focus":
-      focus(c1);
+      focus(cam);
       res.end("focus");
     break;
 
     case "zoomin":
       if(zlevel < 7){ 
         zlevel++;
-        zoomin(c1);
+        zoomin(cam);
         res.end("zoomin");
       }
     break;
@@ -60,7 +59,7 @@ function parseAction(arg, res){
     case "zoomout":
       if(zlevel > -1){ 
         zlevel--;
-        zoomout(c1);
+        zoomout(cam);
         res.end("zoomout");
       }
     break;
@@ -157,7 +156,7 @@ function shoot(cam, res){
 	var arg = "./start.sh " + cam + " " + num;	
   var bang = exec(arg,  function (error, stdout, stderr) {
     var regex = /IMG[^$]*$/;
-    
+    console.log(stdout); 
     var pth = regex.exec(stdout)[0];
     console.log(pth);
     var pnum = num - 1;
